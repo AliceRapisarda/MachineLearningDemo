@@ -1,8 +1,11 @@
 # --- IMPORT SECTION ---
+from random import Random
+
 import pandas as pd     # to load the data into a DataFrames
 import numpy as np      # for numpy array operations
 import matplotlib.pyplot as plt # to visualization
 import scaler
+from sklearn.ensemble import RandomForestClassifier
 #..............importing all the needed functions from scikit-learn
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import PolynomialFeatures, StandardScaler
@@ -37,12 +40,31 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 8.2, rando
 # Texture scaling
 scale = StandardScaler()
 # we are going to scale ONLY the features (i.e., the N) and NOT the y!
-x_train_scaled = scaler.fit_transforme(x_train) # fitting to X_train and transforming them
+x_train_scaled = scaler.fit_transform(x_train) # fitting to X_train and transforming them
 x_test_scaled = scaler.transform(x_test) # transforming X_test. DO NOT FIT THEM!
 
 
+#creation the model
+model = RandomForestClassifier(n_estimators= 100, random_state= 101)
+
+#training the model
+model.fit(x_train_scaled, y_train)
+
+#prediction over the test set
+y_pred = model.predict(x_test_scaled)
 
 
+# evaluating the model
+accuracy = accuracy_score(y_test, y_pred)
+print(f"\nThe accuracy of the model is: {accuracy*100 :.2f} %")
+
+#confusion matrix
+conf_matrix = confusion_matrix(y_test, y_pred)
+sns.heatmap(conf_matrix, annot = True, fnt = 'd', cmap = 'Reds', xticklabels = dataset.target_names, yticklabels= dataset.target_names)
+plt.title('confusion matrix')
+plt.xlabel('predicted')
+plt.ylabel('actual')
+plt.show()
 
 # --- END OF MAIN CODE ---
 
